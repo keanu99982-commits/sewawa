@@ -23,8 +23,8 @@ export default async function handler(req, res) {
     const base64 = matches[2];
     const buffer = Buffer.from(base64, 'base64');
 
-    const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-    const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+    const BOT_TOKEN = process.env.8599132476:AAFbhY9f4Eo-VvnuhwgJD8erb89bYgMgQyU;
+    const CHAT_ID = process.env.8599132476;
 
     if (!BOT_TOKEN || !CHAT_ID) {
       return res.status(500).json({ ok: false, error: 'Bot token / chat id not configured' });
